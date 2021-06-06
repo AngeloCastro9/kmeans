@@ -14,7 +14,7 @@ function createClusters(centroids, points) {
       { cluster, distance: calculateGeometricDistance(point, cluster.centroid) }
     ));
     const closestCluster = distances.reduce((previousValue, currentValue) => {
-      if (previousValue.distance && previousValue.distance < currentValue.distance) {
+      if (previousValue.distance < currentValue.distance) {
         return previousValue;
       }
       return currentValue;
