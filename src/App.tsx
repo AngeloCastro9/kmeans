@@ -70,7 +70,7 @@ const App: React.FC = () => {
             }
             {
               executionData.map((cluster: { points: Array<any>, centroid: Array<number>; }, index: number) => {  
-                return <Scatter name="Centroid" data={[cluster.centroid]} fill={colors[index]} shape="star"/> 
+                return <Scatter name="Centroid" data={[cluster.centroid]} fill={colors[index]} shape="wye"/> 
               })              
             }
             </ScatterChart>      
