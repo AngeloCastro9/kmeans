@@ -6,150 +6,83 @@ import {
   Scatter,
   XAxis,
   YAxis,
+  ZAxis,
   CartesianGrid,
-  Tooltip,
-  Cell
+  Tooltip,  
 } from "recharts";
 
 import kMeans from "../src/kmeans/kMeans"
 
 const App: React.FC = () => {
-
-  const [points, setPoints] = useState([]);
-  const [points2, setPoints2] = useState([]);
-  const [points3, setPoints3] = useState([]);
-  const [points4, setPoints4] = useState([]);
-  let data = points;
-  let data2 = points2;
-  let data3 = points3;
-  let data4 = points4;
-  let i = 1
+  let [data, setData] = useState(Array);
 
   const getAll = useCallback(async () => {
-    let pointsList: any[''] = [] as any;
-    const executions = await kMeans()
-
+    const executions = await kMeans();
+    let preData: Array<any> = [];    
     for (const execution of executions) {
-      
-      await execution.forEach(async (cluster: { points: any; }) => {
-        i = i;
-        const convertedPoints = await cluster.points.map((points: any) => {
-          return { x: points[0], y: points[1] }
+      let convertedData: Array<any> = [];
+      await execution.forEach((cluster: { points: Array<any>, centroid: Array<number>; }) => {
+        // eslint-disable-next-line no-empty-pattern
+        let executionData = {points: [] = [] as any, centroid: [] = [] as any}
+        const convertedPoints = cluster.points.map((point: any) => {
+          return { x: point[0], y: point[1], z: 100 }
         })
-        
-        if(i === 1) {
-          setPoints(pointsList.concat(convertedPoints));
-        }
-        else if(i === 2){
-          setPoints2(pointsList.concat(convertedPoints));  
-        }
-        else if(i === 3){
-          setPoints3(pointsList.concat(convertedPoints));  
-        }
-        else if(i === 4){
-          setPoints4(pointsList.concat(convertedPoints));  
-        }
-        i++;
+        const convertedCentroid = {x: cluster.centroid[0], y: cluster.centroid[1], z: 150}
+        executionData.points = convertedPoints;
+        executionData.centroid = convertedCentroid;
+        convertedData.push(executionData);
       });
-      
+      preData.push(convertedData);   
     }
-  }, [i]);
+    setData(preData);
+  }, []);
 
   useEffect(() => {
     getAll();
   }, [getAll]);
 
-
-
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "red", "pink"];
+  const COLORS = ["green", "red", "blue", "orange", "black", "yellow", "pink", "gray"];
+  
+  function drawGraph(data: any, colors: any) {
+    return ( 
+      data.map((executionData: any) => {
+        return (
+        <div>
+          <ScatterChart
+            width={400}
+            height={400}
+            margin={{
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 20
+            }}
+            >
+            <CartesianGrid />
+            <XAxis type="number" dataKey="x" />
+            <YAxis type="number" dataKey="y"/>            
+            <ZAxis type="number" dataKey="z" range={[100, 150]}/>
+            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+            {
+              executionData.map((cluster: { points: Array<any>, centroid: Array<number>; }, index: number) => {  
+                return <Scatter name="Cluster" data={cluster.points} fill={colors[index]} shape="triangle" />                    
+              })              
+            }
+            {
+              executionData.map((cluster: { points: Array<any>, centroid: Array<number>; }, index: number) => {  
+                return <Scatter name="Centroid" data={[cluster.centroid]} fill={colors[index]} shape="star"/> 
+              })              
+            }
+            </ScatterChart>      
+        </div>
+      )})
+    )
+  }
+  
 
   return (
-    <div>
-      <ScatterChart
-        width={400}
-        height={400}
-        margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20
-        }}
-      >
-        <CartesianGrid />
-        <XAxis type="number" dataKey="x" name="stature" />
-        <YAxis type="number" dataKey="y" name="weight" />
-        <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-        <Scatter name="A school" data={data} fill="#8884d8">
-          {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Scatter>
-      </ScatterChart>
-
-      <ScatterChart
-        width={400}
-        height={400}
-        margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20
-        }}
-      >
-        <CartesianGrid />
-        <XAxis type="number" dataKey="x" name="stature" />
-        <YAxis type="number" dataKey="y" name="weight" />
-        <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-        <Scatter name="A school" data={data2} fill="#8884d8">
-          {data2.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Scatter>
-      </ScatterChart>
-      <ScatterChart
-        width={400}
-        height={400}
-        margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20
-        }}
-      >
-        <CartesianGrid />
-        <XAxis type="number" dataKey="x" name="stature" />
-        <YAxis type="number" dataKey="y" name="weight" />
-        <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-        <Scatter name="A school" data={data3} fill="#8884d8">
-          {data2.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Scatter>
-      </ScatterChart>
-      <ScatterChart
-        width={400}
-        height={400}
-        margin={{
-          top: 20,
-          right: 20,
-          bottom: 20,
-          left: 20
-        }}
-      >
-        <CartesianGrid />
-        <XAxis type="number" dataKey="x" name="stature" />
-        <YAxis type="number" dataKey="y" name="weight" />
-        <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-        <Scatter name="A school" data={data4} fill="#8884d8">
-          {data2.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Scatter>
-      </ScatterChart>
-    </div>
-    
+    <>{drawGraph(data, COLORS)}</>
   );
+
 }
-
-
 export default App;
