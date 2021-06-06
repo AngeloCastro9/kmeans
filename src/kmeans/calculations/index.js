@@ -2,17 +2,22 @@ import dataset from '../dataset';
 
 export function getRandomPoints(points) {
   const randomPoints = [];
+  let pointsToBeSelected = [...points];
   for (let i = 0; i < dataset.quantityClusters; i += 1) {
-    const randomIndex = Math.floor((Math.random() * points.length));
-    randomPoints.push(points[randomIndex]);
+    const randomIndex = Math.floor((Math.random() * pointsToBeSelected.length));
+    randomPoints.push(pointsToBeSelected[randomIndex]);
+    pointsToBeSelected.splice(randomIndex, 1)
   }
   return randomPoints;
 }
 
 export function calculateAverageFromCluster(cluster) {
-  const sumsAllPoints = cluster.points.reduce((accumulatedPoints, currentPoint) => (
-    [accumulatedPoints[0] + currentPoint[0], accumulatedPoints[1] + currentPoint[1]]
-  ));
+  let sumsAllPoints = [0, 0];
+  if (cluster.points.length > 0) {
+    sumsAllPoints = cluster.points.reduce((accumulatedPoints, currentPoint) => (
+      [accumulatedPoints[0] + currentPoint[0], accumulatedPoints[1] + currentPoint[1]]
+    ));
+  }
   const numberOfPoints = cluster.points.length;
   const avgAllPoints = [
     parseFloat((sumsAllPoints[0] / numberOfPoints).toFixed(1)),
