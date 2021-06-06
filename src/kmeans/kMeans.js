@@ -29,10 +29,10 @@ function getCentroidsFromClustersPoints(clusters) {
   ));
 }
 
-export default function kMeans(previousClusters = null, index=0) {
+export default function kMeans(previousClusters = null) {
   const executions = [];
   let centroids = [];
-  console.log("hasPreviousCluster", previousClusters !== null);
+
   if (previousClusters === null) {
     centroids = getRandomPoints(dataset.points);
   } else {
@@ -52,7 +52,7 @@ export default function kMeans(previousClusters = null, index=0) {
   if (!end) {
     const clusters = createClusters(centroids, dataset.points);
     executions.push(clusters);
-      const nextExecutions = kMeans(clusters, index+1);
+      const nextExecutions = kMeans(clusters);
       if (nextExecutions.length > 0) {
         executions.push(...nextExecutions);
       }
