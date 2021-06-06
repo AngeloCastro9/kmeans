@@ -8,21 +8,35 @@ export function getRandomPoints(points) {
     randomPoints.push(pointsToBeSelected[randomIndex]);
     pointsToBeSelected.splice(randomIndex, 1)
   }
+  
   return randomPoints;
 }
 
 export function calculateAverageFromCluster(cluster) {
   let sumsAllPoints = [0, 0];
-  if (cluster.points.length > 0) {
+  if (cluster.points.length > 1) {
     sumsAllPoints = cluster.points.reduce((accumulatedPoints, currentPoint) => (
       [accumulatedPoints[0] + currentPoint[0], accumulatedPoints[1] + currentPoint[1]]
     ));
   }
-  const numberOfPoints = cluster.points.length;
+  if (cluster.points.length === 1) {
+    sumsAllPoints = [cluster.points[0][0], cluster.points[0][1]]
+  }
+  let numberOfPoints = cluster.points.length;
+  if (numberOfPoints === 0) {
+    numberOfPoints = 1;
+  }
+
   const avgAllPoints = [
-    parseFloat((sumsAllPoints[0] / numberOfPoints).toFixed(1)),
-    parseFloat((sumsAllPoints[1] / numberOfPoints).toFixed(1)),
+    sumsAllPoints[0] / numberOfPoints,
+    sumsAllPoints[1] / numberOfPoints,
   ];
+  if (avgAllPoints[0] > 0) {
+    avgAllPoints[0].toFixed(1);
+  }
+  if (avgAllPoints[1] > 0) {
+    avgAllPoints[1].toFixed(1);
+  }
   return avgAllPoints;
 }
 

@@ -7,9 +7,15 @@ const dataset = {
         [7, 5.4], 
         [7.8, 6.4], 
         [7.9, 7.2], 
-        [8.7, 9.4]
+        [8.7, 9.4],
+        [8.2, 9.1],
+        [4.3, 3.2],
+        [2.3, 6.4],
+        [1.1, 5.4],
+        [3.2, 7.4],
+        [8.0, 1.5],
     ],
-    "quantityClusters": 2
+    "quantityClusters": 3
 }
 
 export default dataset;

@@ -13,12 +13,13 @@ function createClusters(centroids, points) {
     const distances = clusters.map((cluster) => (
       { cluster, distance: calculateGeometricDistance(point, cluster.centroid) }
     ));
-    const closestCluster = distances.reduce((previousValue, currentValue) => (
-      (previousValue.distance < currentValue.distance
-        ? previousValue.cluster
-        : currentValue.cluster)
-    ));
-    closestCluster.points.push(point);
+    const closestCluster = distances.reduce((previousValue, currentValue) => {
+      if (previousValue.distance && previousValue.distance < currentValue.distance) {
+        return previousValue;
+      }
+      return currentValue;
+      });
+    closestCluster.cluster.points.push(point);
   });
   return clusters;
 }
@@ -29,17 +30,15 @@ function getCentroidsFromClustersPoints(clusters) {
   ));
 }
 
-export default function kMeans(previousClusters = null) {
+export default function kMeans(previousClusters = null, index=0) {
   const executions = [];
   let centroids = [];
-
   if (previousClusters === null) {
     centroids = getRandomPoints(dataset.points);
   } else {
     centroids = getCentroidsFromClustersPoints(previousClusters);
   }
   let end = false;
-  
   if (previousClusters) {  
     end = centroids.every((centroid, idx) => {
       const lastCentroid = previousClusters[idx].centroid;
@@ -50,12 +49,16 @@ export default function kMeans(previousClusters = null) {
     });
   }
   if (!end) {
+    if (index < 20) {
     const clusters = createClusters(centroids, dataset.points);
     executions.push(clusters);
-      const nextExecutions = kMeans(clusters);
+      const nextExecutions = kMeans(clusters, index+1);
       if (nextExecutions.length > 0) {
         executions.push(...nextExecutions);
       }
+    } else {
+      console.log("deu erro");
+    }
   }
   return executions;
 }
